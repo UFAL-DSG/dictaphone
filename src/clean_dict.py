@@ -3,8 +3,17 @@
 import argparse
 
 cmu2ipa = [
+    ('', '(ə)'),
+    ('', '(ə.)'),
+    ('', '(j)'),
+    ('', '(m)'),
+    ('', '(s)'),
+    ('', '(st)'),
+    ('', '(l)'),
+    ('', '(.)'),
     ('EH', 'ɜə'),
     ('AH', 'ə'),
+    ('AH', 'ǝ'),
     ('EY', 'eı'),
     ('IY', 'ı'),
     ('EY IH', 'ei'),
@@ -14,6 +23,20 @@ cmu2ipa = [
     ('AW', 'ʋ'),
     ('Z', 'z'),
     ('EH', 'e'),
+    ('OE', 'œ'),
+    ('OH', 'ø'),
+    ('OH', 'õ'),
+    ('X', 'x'),
+    ('GH', 'ç'),
+    ('R', 'ʀ',),
+    ('R', 'ʁ'),
+    ('R', 'ɡ'),
+    ('U', 'ɥ'),
+    ('NG', 'ɲ'),
+    ('EH', 'é'),
+    ('K', 'c'),
+    ('IH', 'ʏ'),
+    ('XC', 'ɤ°'),
 
     ('AA', 'ɑ'),
     ('AE', 'æ'),
@@ -78,9 +101,16 @@ cmu2ipa = [
     ('', 'ˈ'),
     ('', ':'),
     ('', ','),
+    ('', '.'),
+    ('', '˘'),
+    ('', '\u0303'),
+    ('', '\u203f'),
 ]
 
-
+exclude = [
+    'Valerensäure\tacide valerianique',
+    'affaiblir\t-fɛ-',
+]
 def ipa2ascii(i):
     a = i.lower()
     for cmu, ipa in cmu2ipa:
@@ -97,6 +127,9 @@ def clean(fn_i, fn_o):
             for l in i:
                 l = l.strip()
                 if '<' in l or '>' in l:
+                    continue
+
+                if l in exclude:
                     continue
 
                 if '\t' in l:
@@ -121,12 +154,17 @@ def clean(fn_i, fn_o):
 
                     n = w + '\t' + p
 
-                for c in ['a', 'ac', 'co', 'c', ',', 'o', 'y', 'ɜ', '-->', '<!--']:
+                for c in ['a', 'ac', 'co', 'c', ',', 'o', 'y', 'ɜ', '-->', '<!--', # en
+                          'q', 'x', 'ç', 'ø', 'œ', 'ç', '\u0303', # de
+                          'c', 'é', 'õ', 'ǝ', 'ɥ', 'ʀ', 'ʁ', 'ǝ', 'ɥ', 'ɲ', 'ɲ', '‿', '(', ')', '-' # fr
+                          'ɤ', '°', 'ʏ', '˘', # nl
+                          ]:
                     # print(set(p.split(' ')))
-                    if c in set(p.split(' ')):
+                    if c in p:
                         print(l)
                         print(n)
                         print('')
+                        break
 
                 n = n.upper()
 
@@ -153,7 +191,7 @@ if __name__ == '__main__':
 
     phonetic_set = clean(args.input, args.output)
 
-    print('Phonetic alphabet of the cleaned dictionary')
+    print('Phonetic alphabet of the cleaned dictionary for:', args.input, args.output)
     for p in sorted(phonetic_set):
         print(p, sep=' ', end=' ')
 

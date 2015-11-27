@@ -66,5 +66,7 @@ if [ $STAGE -le 5 ]; then
     >$TMP/model-5.log 2>&1 || exit 1
 fi
 
+cp $MODEL_5 $LANG/g2p.model
+
 echo "G2P training finished OK!"
 exit 0
